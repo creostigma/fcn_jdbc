@@ -37,6 +37,15 @@ public abstract class AbsTables {
         idbConnector.executeRequest(String.format("drop table if exists %s", this.tableName));
     }
 
+    public String formatPredicatesData(Map<PredicatesData, List<String>> predicates) {
+        String result = "";
+        for (Map.Entry<PredicatesData, List<String>> predicate : predicates.entrySet()) {
+            PredicatesData predicateData = predicate.getKey();
+            List<String> values = predicate.getValue();
+            result += String.join(String.format(" %s ", predicateData.name()), values);
+        }
+        return result;
+    }
 
     public  ResultSet getData(String[] columns, Map<PredicatesData, List<String>> predicates, Map<String, String> join){
         String columnsRequest = columns.length == 0 ? "*" : String.join(", ", columns);
@@ -48,26 +57,16 @@ public abstract class AbsTables {
             if (predicateValue.size() == 1) {
                 result = predicateValue.get(0);
             } else {
-                for (Map.Entry<PredicatesData, List<String>> predicate : predicates.entrySet()) {
-                    PredicatesData predicateData = predicate.getKey();
-                    List<String> values = predicate.getValue();
-                    result += String.join(String.format(" %s ", predicateData.name()), values);
-                }
+                formatPredicatesData(predicates);
             }
         } else {
-            for (Map.Entry<PredicatesData, List<String>> predicate : predicates.entrySet()) {
-                PredicatesData predicateData = predicate.getKey();
-                List<String> values = predicate.getValue();
-                result += String.join(String.format(" %s ", predicateData.name()), values);
-            }
+            formatPredicatesData(predicates);
         }
 
         if(join.size() >= 1){
-            if(join != null && !join.isEmpty()){
                 for (Map.Entry<String, String> entry : join.entrySet()){
                     joinResult += String.format("join %s on %s ", entry.getKey(), entry.getValue());
                 }
-            }
         }
 
         if (!result.isEmpty()){

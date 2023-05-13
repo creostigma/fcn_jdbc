@@ -13,11 +13,9 @@ public class PropertiesReader implements ISettings{
     @Override
     public Map<String, String> read(){
         String rootFolder = System.getProperty("user.dir");
-
         Map<String, String> proops = new HashMap<>();
 
-       // try(InputStream input = Files.newInputStream(Paths.get(String.format("%s/scr/resources/%s", rootFolder, "db.properties")))){
-        try(InputStream input = Files.newInputStream(Paths.get(String.format("/Users/ruslan/IdeaProjects/fcn_jdbc/src/resources/db.properties")))){
+        try(InputStream input = Files.newInputStream(Paths.get(String.format("%s/src/resources/db.properties", rootFolder)))){
             Properties properties = new Properties();
             properties.load(input);
 
